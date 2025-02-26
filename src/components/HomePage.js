@@ -30,6 +30,7 @@ const HomePage = () => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     axios
@@ -74,6 +75,14 @@ const HomePage = () => {
     setCartOpen(false);
   };
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredProducts = products.filter((product) =>
+    product.productName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div>
       {/* Header */}
@@ -91,7 +100,12 @@ const HomePage = () => {
             }}
           >
             <SearchIcon style={{ marginRight: 8, color: "gray" }} />
-            <InputBase placeholder="ค้นหาสินค้า..." style={{ flexGrow: 1 }} />
+            <InputBase
+              placeholder="ค้นหาสินค้า..."
+              style={{ flexGrow: 1 }}
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
           </div>
           <IconButton color="inherit" sx={{ marginLeft: 2 }} onClick={handleCartOpen}>
             <Badge badgeContent={cart.reduce((total, item) => total + item.quantity, 0)} color="secondary">
@@ -107,7 +121,7 @@ const HomePage = () => {
           สินค้าขายดี
         </Typography>
         <Grid container spacing={3}>
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <Grid item xs={12} sm={6} md={4} key={product.productID}>
               <Card>
                 <CardMedia
